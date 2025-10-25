@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Piedra Papel Tijera</title>
+    
+    <!-- ESTILOS CSS - Aquí definimos cómo se ve todo -->
+    <style>
+        /* Estilo para toda la página */
+        body {
+            background-color: lightblue;
+            text-align: center;
+            font-family: Arial;
+            padding: 20px;
+        }
+        
+        /* Estilo para el título */
+        h1 {
+            color: darkblue;
+        }
+        
+        /* Estilo para los botones grandes */
+        button {
+            background-color: green;
+            color: white;
+            padding: 20px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+        }
+        
+        /* Cuando pasas el mouse por encima del botón */
+        button:hover {
+            background-color: darkgreen;
+        }
+        
+        /* Estilo para las cajas de texto */
+        input {
+            padding: 10px;
+            font-size: 18px;
+            margin: 10px;
+            width: 300px;
+        }
+        
+        /* Estilo para el área de resultados */
+        #resultado {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+        
+        /* Estilo para el marcador */
+        #marcador {
+            background-color: lightyellow;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- TÍTULO DE LA PÁGINA -->
+    <h1>🎮 Piedra Papel Tijera 🎮</h1>
+    
+    <!-- PASO 1: PEDIR NOMBRES -->
+    <div id="pantallaInicio">
+        <h2>Ingresa los nombres de los jugadores:</h2>
+        
+        <p>Jugador 1:</p>
+        <input type="text" id="nombreJugador1" placeholder="Escribe tu nombre">
+        
+        <p>Jugador 2:</p>
+        <input type="text" id="nombreJugador2" placeholder="Escribe tu nombre">
+        
+        <br><br>
+        <button onclick="empezarJuego()">EMPEZAR A JUGAR</button>
+    </div>
+    
+    <!-- PASO 2: JUGAR (Oculto al inicio) -->
+    <div id="pantallaJuego" style="display: none;">
+        
+        <!-- Marcador de puntos -->
+        <div id="marcador">
+            <p><strong id="nombre1">Jugador 1</strong>: <span id="puntos1">0</span> puntos</p>
+            <p><strong id="nombre2">Jugador 2</strong>: <span id="puntos2">0</span> puntos</p>
+            <p>Empates: <span id="empates">0</span></p>
+        </div>
+        
+        <!-- Indicador de turno -->
+        <h2 id="turno">Turno de Jugador 1</h2>
+        
+        <!-- Botones de elección -->
+        <button onclick="elegir('piedra')">🪨 PIEDRA</button>
+        <button onclick="elegir('papel')">📄 PAPEL</button>
+        <button onclick="elegir('tijera')">✂️ TIJERA</button>
+        
+        <!-- Área de resultados -->
+        <div id="resultado">
+            <p>Elige tu jugada para empezar</p>
+        </div>
+        
+        <button onclick="terminarJuego()">TERMINAR JUEGO</button>
+    </div>
+    
+    <!-- PASO 3: RESULTADOS FINALES (Oculto al inicio) -->
+    <div id="pantallaFinal" style="display: none;">
+        <h2>🏆 JUEGO TERMINADO 🏆</h2>
+        <div id="resultadoFinal"></div>
+        <br>
+        <button onclick="reiniciar()">JUGAR DE NUEVO</button>
+    </div>
+    
+    <!-- JAVASCRIPT - Aquí va la programación del juego -->
+    <script>
+        // VARIABLES - Aquí guardamos información importante
+        var jugador1 = "";        // Nombre del jugador 1
+        var jugador2 = "";        // Nombre del jugador 2
+        var puntosJugador1 = 0;   // Puntos del jugador 1
+        var puntosJugador2 = 0;   // Puntos del jugador 2
+        var numeroEmpates = 0;    // Cantidad de empates
+        var turnoActual = 1;      // De quién es el turno (1 o 2)
+        var eleccionJugador1 = ""; // Lo que eligió el jugador 1
+        var eleccionJugador2 = ""; // Lo que eligió el jugador 2
+        
+        // FUNCIÓN 1: Empezar el juego
+        function empezarJuego() {
+            // Obtenemos los nombres que escribieron
+            jugador1 = document.getElementById("nombreJugador1").value;
+            jugador2 = document.getElementById("nombreJugador2").value;
+            
+            // Verificamos que hayan escrito los nombres
+            if (jugador1 === "" || jugador2 === "") {
+                alert("Por favor escribe ambos nombres");
+                return; // Salimos de la función
+            }
+            
+            // Ponemos los nombres en el marcador
+            document.getElementById("nombre1").textContent = jugador1;
+            document.getElementById("nombre2").textContent = jugador2;
+            
+            // Actualizamos el turno
+            document.getElementById("turno").textContent = "Turno de " + jugador1;
+            
+            // Ocultamos la pantalla de inicio
+            document.getElementById("pantallaInicio").style.display = "none";
+            
+            // Mostramos la pantalla del juego
+            document.getElementById("pantallaJuego").style.display = "block";
+        }
+        
+        // FUNCIÓN 2: Cuando un jugador elige piedra, papel o tijera
+        function elegir(opcion) {
+            // Si es el turno del jugador 1
+            if (turnoActual === 1) {
+                eleccionJugador1 = opcion; // Guardamos su elección
+                turnoActual = 2; // Cambiamos al turno 2
+                
+                // Actualizamos el texto del turno
+                document.getElementById("turno").textContent = "Turno de " + jugador2;
+                
+                // Mostramos mensaje
+                document.getElementById("resultado").innerHTML = 
+                    "<p>" + jugador1 + " ya eligió ✅</p><p>Ahora es el turno de " + jugador2 + "</p>";
+            }
+            // Si es el turno del jugador 2
+            else {
+                eleccionJugador2 = opcion; // Guardamos su elección
+                
+                // Ya eligieron los dos, determinamos quién ganó
+                determinarGanador();
+                
+                // Reiniciamos para la siguiente ronda
+                turnoActual = 1;
+                eleccionJugador1 = "";
+                eleccionJugador2 = "";
+                
+                // Actualizamos el turno
+                document.getElementById("turno").textContent = "Turno de " + jugador1;
+            }
+        }
+        
+        // FUNCIÓN 3: Determinar quién ganó la ronda
+        function determinarGanador() {
+            var textoResultado = "";
+            
+            // Mostramos lo que eligió cada uno
+            textoResultado += "<p>" + jugador1 + " eligió: " + eleccionJugador1.toUpperCase() + "</p>";
+            textoResultado += "<p>" + jugador2 + " eligió: " + eleccionJugador2.toUpperCase() + "</p>";
+            
+            // CASO 1: Si eligieron lo mismo = EMPATE
+            if (eleccionJugador1 === eleccionJugador2) {
+                numeroEmpates = numeroEmpates + 1; // Aumentamos empates
+                textoResultado += "<p><strong>🤝 EMPATE 🤝</strong></p>";
+            }
+            // CASO 2: Gana el jugador 1
+            else if (
+                (eleccionJugador1 === "piedra" && eleccionJugador2 === "tijera") ||
+                (eleccionJugador1 === "papel" && eleccionJugador2 === "piedra") ||
+                (eleccionJugador1 === "tijera" && eleccionJugador2 === "papel")
+            ) {
+                puntosJugador1 = puntosJugador1 + 1; // Sumamos punto
+                textoResultado += "<p><strong>🎉 GANA " + jugador1 + " 🎉</strong></p>";
+            }
+            // CASO 3: Gana el jugador 2
+            else {
+                puntosJugador2 = puntosJugador2 + 1; // Sumamos punto
+                textoResultado += "<p><strong>🎉 GANA " + jugador2 + " 🎉</strong></p>";
+            }
+            
+            // Mostramos el resultado en pantalla
+            document.getElementById("resultado").innerHTML = textoResultado;
+            
+            // Actualizamos el marcador
+            document.getElementById("puntos1").textContent = puntosJugador1;
+            document.getElementById("puntos2").textContent = puntosJugador2;
+            document.getElementById("empates").textContent = numeroEmpates;
+        }
+        
+        // FUNCIÓN 4: Terminar el juego y mostrar ganador final
+        function terminarJuego() {
+            // Ocultamos la pantalla del juego
+            document.getElementById("pantallaJuego").style.display = "none";
+            
+            // Mostramos la pantalla final
+            document.getElementById("pantallaFinal").style.display = "block";
+            
+            // Determinamos quién ganó en total
+            var mensajeFinal = "";
+            
+            if (puntosJugador1 > puntosJugador2) {
+                mensajeFinal = "<h3>¡" + jugador1 + " ES EL CAMPEÓN!</h3>";
+            } else if (puntosJugador2 > puntosJugador1) {
+                mensajeFinal = "<h3>¡" + jugador2 + " ES EL CAMPEÓN!</h3>";
+            } else {
+                mensajeFinal = "<h3>¡EMPATE TOTAL!</h3>";
+            }
+            
+            // Agregamos las puntuaciones
+            mensajeFinal += "<p>" + jugador1 + ": " + puntosJugador1 + " puntos</p>";
+            mensajeFinal += "<p>" + jugador2 + ": " + puntosJugador2 + " puntos</p>";
+            mensajeFinal += "<p>Empates: " + numeroEmpates + "</p>";
+            
+            // Mostramos todo
+            document.getElementById("resultadoFinal").innerHTML = mensajeFinal;
+        }
+        
+        // FUNCIÓN 5: Reiniciar todo el juego
+        function reiniciar() {
+            // Reseteamos todas las variables a cero
+            puntosJugador1 = 0;
+            puntosJugador2 = 0;
+            numeroEmpates = 0;
+            turnoActual = 1;
+            eleccionJugador1 = "";
+            eleccionJugador2 = "";
+            
+            // Limpiamos los nombres
+            document.getElementById("nombreJugador1").value = "";
+            document.getElementById("nombreJugador2").value = "";
+            
+            // Ocultamos la pantalla final
+            document.getElementById("pantallaFinal").style.display = "none";
+            
+            // Mostramos la pantalla de inicio
+            document.getElementById("pantallaInicio").style.display = "block";
+        }
+    </script>
+</body>
+</html>
