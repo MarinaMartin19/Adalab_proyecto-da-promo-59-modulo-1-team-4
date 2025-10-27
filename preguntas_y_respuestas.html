@@ -2,140 +2,181 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Geografía Gastronómica</title>
+  <title>🍽️ El Misterio del Plato Español</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #fefae0;
-      color: #333;
-      padding: 20px;
-      max-width: 600px;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf3;
+      color: #3b1f0f;
+      padding: 2em;
+      max-width: 800px;
       margin: auto;
     }
     h1 {
-      color: #bc6c25;
+      color: #8b1e1e;
+      text-align: center;
+    }
+    .intro, .final {
+      background-color: #fbe3c6;
+      padding: 1em;
+      border-radius: 10px;
+      margin-bottom: 1em;
+      border: 2px dashed #c76c3a;
+    }
+    .pregunta {
+      margin-top: 1em;
+      font-weight: bold;
+      color: #5e2d0c;
     }
     .estado {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .resultado {
-      margin-top: 10px;
-      font-size: 1.2em;
+      margin-top: 1em;
+      font-size: 1.1em;
+      color: #2e4e1f;
     }
     input[type="text"] {
       width: 100%;
-      padding: 8px;
-      margin-top: 10px;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      border: 1px solid #c76c3a;
+      border-radius: 5px;
     }
     button {
-      padding: 10px 20px;
-      margin-top: 10px;
-      background-color: #283618;
+      margin-top: 0.5em;
+      padding: 0.5em 1em;
+      background-color: #8b1e1e;
       color: white;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #606c38;
+      background-color: #5e1414;
     }
   </style>
 </head>
 <body>
 
-  <h1>🌍 Geografía Gastronómica 🌍</h1>
-  <p>Responde correctamente a 5 preguntas antes de fallar 3 veces. ¡Suerte!</p>
+  <h1>🍄 El Misterio del Plato Español 🍄</h1>
 
-  <div id="pregunta"></div>
-  <input type="text" id="respuesta" placeholder="Escribe tu respuesta aquí">
-  <button onclick="verificarRespuesta()">Responder</button>
+  <div class="intro" id="intro">
+    <p>Has llegado a un restaurante donde cada plato esconde una pista geográfica.<br>
+    Tu misión: identificar la ciudad española detrás de cada delicia.<br>
+    Si acumulas demasiados fallos, el chef te mandará directo a fregar ollas.<br>
+    Si aciertas lo suficiente, el delantal de maestro cocinero será tuyo.</p>
 
-  <div class="estado" id="estado"></div>
-  <div class="resultado" id="resultado"></div>
+    <p>🎯 Aciertos necesarios para ganar: <strong>5</strong><br>
+    💔 Fallos permitidos antes de perder: <strong>3</strong></p>
+
+    <p>⚠️ <strong>IMPORTANTE:</strong> Responde con el nombre de la ciudad en <em>minúsculas</em> y <em>sin tildes</em>.</p>
+
+    <input type="text" id="nombre" placeholder="Introduce tu nombre...">
+    <button onclick="iniciarJuego()">Comenzar aventura</button>
+  </div>
+
+  <div id="juego"></div>
 
   <script>
-    // 1. Diccionario de preguntas y respuestas
-    const preguntasGeografia = {
+    const preguntas = {
       "Si alguien te ofrece tapas gratis con cada bebida y piensas esto es demasiado bueno para ser verdad, ¿en qué ciudad estás?": "granada",
       "¿En qué ciudad comer un rabo de toro es tan normal que nadie se sorprende?": "cordoba",
       "¿Dónde comer bocadillos de calamares es casi obligatorio?": "madrid",
       "Si pedir pan con tomate no levanta sospechas de extrañeza, ¿en qué ciudad estás?": "barcelona",
       "Si un plato de marmitako de bonito se sirve casi en cada restaurante de pescado, ¿dónde estás?": "bilbao",
       "¿En qué ciudad pedir una paella es casi un arte?": "valencia",
-      "¿En qué ciudad el ternasco asado es el rey indiscutible de los menus?": "zaragoza",
-      "Si la morcilla es tan famosa que tiene hasta su propia denominacion de origen, ¿en qué ciudad estás?": "burgos",
+      "¿En qué ciudad el ternasco asado es el rey indiscutible de los menús?": "zaragoza",
+      "Si la morcilla es tan famosa que tiene hasta su propia denominación de origen, ¿en qué ciudad estás?": "burgos",
       "¿Dónde pedir un cachopo del tamaño de tu cabeza es completamente normal?": "asturias",
       "Si te invitan a comer Rabas (calamares fritos), un aperitivo que sabe a mar y que se come principalmente los domingos, ¿en qué ciudad estás?": "santander",
-      "¿En qué ciudad las tortas de alma, unos dulces tradicionales de almendra y canela, son el souvenir gastronomico más buscado?": "teruel",
-      "¿En qué provincia las frituras de harina de garbanzo con pequeños crustaceos se llaman Tortillitas de Camarones?": "cadiz",
-      "¿En qué ciudad es tradicion comer buñuelos rellenos de cabello de angel llamados Borrachuelos?": "malaga",
-      "Si visitas la tierra donde el turron navideno es el producto estrella y se fabrica artesanalmente desde hace siglos, ¿dónde estás?": "alicante",
-      "¿Dónde comer cebollas asadas con las manos, mancharte hasta los codos de salsa negra y llevarlo todo con babero es una tradicion respetable?": "tarragona",
-      "¿Dónde un bollo frito con crema llamado xuixo es el desayuno estrella y nadie piensa en las calorias?": "gerona",
-      "Si comer caracoles asados en bandeja es toda una tradicion en primavera y verano, ¿en qué ciudad estás?": "lerida"
+      "¿En qué ciudad las tortas de alma, unos dulces tradicionales de almendra y canela, son el souvenir gastronómico más buscado?": "teruel",
+      "¿En qué provincia las frituras de harina de garbanzo con pequeños crustáceos se llaman Tortillitas de Camarones?": "cadiz",
+      "¿En qué ciudad es tradición comer buñuelos rellenos de cabello de ángel llamados Borrachuelos?": "malaga",
+      "Si visitas la tierra donde el turrón navideño es el producto estrella y se fabrica artesanalmente desde hace siglos, ¿dónde estás?": "alicante",
+      "¿Dónde comer cebollas asadas con las manos, mancharte hasta los codos de salsa negra y llevarlo todo con babero es una tradición respetable?": "tarragona",
+      "¿Dónde un bollo frito con crema llamado xuixo es el desayuno estrella y nadie piensa en las calorías?": "gerona",
+      "Si comer caracoles asados en bandeja es toda una tradición en primavera y verano, ¿en qué ciudad estás?": "lerida"
     };
 
-    // 2. Variables de estado
     let aciertos = 0;
     let fallos = 0;
-    const objetivoAciertos = 5;
+    const objetivo = 5;
     const maxFallos = 3;
-    let listaPreguntas = Object.keys(preguntasGeografia);
+    let preguntasRestantes = [];
+    let nombreJugador = "";
 
-    // 3. Mostrar la primera pregunta
-    let preguntaActual = "";
-    function nuevaPregunta() {
-      if (listaPreguntas.length === 0) return;
-      const indice = Math.floor(Math.random() * listaPreguntas.length);
-      preguntaActual = listaPreguntas[indice];
-      listaPreguntas.splice(indice, 1);
-      document.getElementById("pregunta").textContent = preguntaActual;
-      document.getElementById("respuesta").value = "";
+    function iniciarJuego() {
+      nombreJugador = document.getElementById("nombre").value.trim();
+      if (!nombreJugador) return alert("Por favor, escribe tu nombre.");
+      preguntasRestantes = Object.keys(preguntas);
+      document.getElementById("intro").style.display = "none";
+      mostrarPregunta();
     }
 
-    // 4. Verificar la respuesta del usuario
-    function verificarRespuesta() {
-      const respuestaUsuario = document.getElementById("respuesta").value.trim().toLowerCase();
-      const respuestaCorrecta = preguntasGeografia[preguntaActual];
-      const resultado = document.getElementById("resultado");
+    function mostrarPregunta() {
+      if (aciertos >= objetivo || fallos >= maxFallos || preguntasRestantes.length === 0) {
+        mostrarResultadoFinal();
+        return;
+      }
 
-      if (respuestaUsuario === respuestaCorrecta) {
+      const index = Math.floor(Math.random() * preguntasRestantes.length);
+      const pregunta = preguntasRestantes.splice(index, 1)[0];
+
+      const juegoDiv = document.getElementById("juego");
+      juegoDiv.innerHTML = `
+        <div class="pregunta">
+          <p>👨‍🍳 ${nombreJugador}, tu pregunta es:</p>
+          <p>${pregunta}</p>
+          <input type="text" id="respuesta" placeholder="Tu respuesta...">
+          <button onclick="verificarRespuesta('${pregunta}')">Responder</button>
+        </div>
+        <div class="estado">
+          Aciertos: ${aciertos} | Fallos: ${fallos}
+        </div>
+      `;
+    }
+
+    function verificarRespuesta(pregunta) {
+      const input = document.getElementById("respuesta");
+      const respuesta = input.value.trim().toLowerCase();
+      const correcta = preguntas[pregunta];
+
+      const juegoDiv = document.getElementById("juego");
+      const resultado = document.createElement("div");
+      resultado.className = "estado";
+
+      if (respuesta === correcta) {
         aciertos++;
         resultado.textContent = "✅ ¡Correcto!";
       } else {
         fallos++;
-        resultado.textContent = `❌ Incorrecto. La respuesta correcta era: ${respuestaCorrecta}`;
+        resultado.textContent = `❌ Incorrecto. La respuesta era: ${correcta}`;
       }
 
-      actualizarEstado();
+      juegoDiv.appendChild(resultado);
+      setTimeout(mostrarPregunta, 1500);
+    }
 
-      if (aciertos === objetivoAciertos) {
-        resultado.textContent += " 🏆 ¡Ganaste!";
-        desactivarJuego();
-      } else if (fallos === maxFallos) {
-        resultado.textContent += " 💀 Has perdido.";
-        desactivarJuego();
+    function mostrarResultadoFinal() {
+      const juegoDiv = document.getElementById("juego");
+      juegoDiv.innerHTML = "";
+
+      const final = document.createElement("div");
+      final.className = "final";
+
+      if (aciertos >= objetivo) {
+        final.innerHTML = `<h2>🏆 ¡VICTORIA!</h2>
+          <p>El chef te entrega el delantal dorado y te invita a su cocina.<br>
+          Brindis con vino, risas y una ovación de los comensales.<br>
+          🌟 ¡Eres oficialmente Maestro Cocinero!</p>`;
       } else {
-        nuevaPregunta();
+        final.innerHTML = `<h2>💀 DERROTA</h2>
+          <p>Has confundido demasiadas ciudades y el chef no perdona.<br>
+          🧼 Te toca fregar ollas hasta que la luna se esconda.</p>`;
       }
-    }
 
-    // 5. Mostrar estado actual
-    function actualizarEstado() {
-      document.getElementById("estado").textContent = `Aciertos: ${aciertos} | Fallos: ${fallos}`;
+      juegoDiv.appendChild(final);
     }
-
-    // 6. Desactivar el juego al finalizar
-    function desactivarJuego() {
-      document.getElementById("pregunta").textContent = "Juego finalizado.";
-      document.querySelector("button").disabled = true;
-      document.getElementById("respuesta").disabled = true;
-    }
-
-    // Iniciar el juego
-    nuevaPregunta();
-    actualizarEstado();
   </script>
-
 </body>
 </html>
+
+
