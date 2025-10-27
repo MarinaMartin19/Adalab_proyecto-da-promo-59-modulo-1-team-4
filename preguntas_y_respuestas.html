@@ -98,8 +98,8 @@
 
     let aciertos = 0;
     let fallos = 0;
-    const objetivo = 5;
-    const maxFallos = 3;
+    const objetivo_aciertos = 5;
+    const max_fallos = 3;
     let preguntasRestantes = [];
     let nombreJugador = "";
 
@@ -112,7 +112,7 @@
     }
 
     function mostrarPregunta() {
-      if (aciertos >= objetivo || fallos >= maxFallos || preguntasRestantes.length === 0) {
+      if (aciertos >= objetivo_aciertos || fallos >= max_fallos || preguntasRestantes.length === 0) {
         mostrarResultadoFinal();
         return;
       }
@@ -162,10 +162,9 @@
       const final = document.createElement("div");
       final.className = "final";
 
-      if (aciertos >= objetivo) {
+      if (aciertos >= objetivo_aciertos) {
         final.innerHTML = `<h2>🏆 ¡VICTORIA!</h2>
           <p>El chef te entrega el delantal dorado y te invita a su cocina.<br>
-          Brindis con vino, risas y una ovación de los comensales.<br>
           🌟 ¡Eres oficialmente Maestro Cocinero!</p>`;
       } else {
         final.innerHTML = `<h2>💀 DERROTA</h2>
@@ -178,5 +177,6 @@
   </script>
 </body>
 </html>
+
 
 
