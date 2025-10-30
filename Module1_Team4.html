@@ -319,6 +319,12 @@
                 <div class="game-description">¿Reconoces las ciudades españolas por sus platos típicos?</div>
             </div>
 
+            <div class="game-card" onclick="showGame('geography')">
+                <div class="game-icon">🌍</div>
+                <div class="game-title">Quiz de Geografía</div>
+                <div class="game-description">Pon a prueba tus conocimientos geográficos del mundo.</div>
+            </div>
+
             <div class="game-card" onclick="showGame('tictactoe')">
                 <div class="game-icon">⭕❌</div>
                 <div class="game-title">Tic Tac Toe <span class="bonus-badge">BONUS</span></div>
@@ -372,6 +378,19 @@
             <div id="trivia-result"></div>
         </div>
 
+        <!-- Quiz Geografía -->
+        <div id="geography-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>🌍 Quiz de Geografía</h2>
+            <div class="score" id="geography-score">Aciertos: 0 | Fallos: 0</div>
+            <div class="question-card">
+                <div class="question-text" id="geography-question"></div>
+                <input type="text" id="geography-answer" placeholder="Escribe tu respuesta">
+                <button onclick="checkGeographyAnswer()">Responder</button>
+            </div>
+            <div id="geography-result"></div>
+        </div>
+
         <!-- Tic Tac Toe -->
         <div id="tictactoe-game" class="game-area">
             <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
@@ -393,6 +412,7 @@
         // Estado global
         let pptScore = {player: 0, computer: 0};
         let triviaScore = {aciertos: 0, fallos: 0};
+        let geographyScore = {aciertos: 0, fallos: 0};
         let triviaQuestions = [
             {q: "Si alguien te ofrece tapas gratis con cada bebida y piensas esto es demasiado bueno para ser verdad, ¿en qué ciudad estás?", a: "granada"},
             {q: "¿En qué ciudad comer un rabo de toro es tan normal que nadie se sorprende?", a: "cordoba"},
@@ -405,8 +425,22 @@
             {q: "¿Dónde pedir un cachopo del tamaño de tu cabeza es completamente normal?", a: "asturias"},
             {q: "Si te invitan a comer Rabas (calamares fritos), un aperitivo que sabe a mar y que se come principalmente los domingos, ¿en qué ciudad estás?", a: "santander"}
         ];
+        let geographyQuestions = [
+            {q: "¿Cuál es la capital de Australia?", a: "canberra"},
+            {q: "¿Cuál es la frontera terrestre más larga del mundo?", a: "canadá y estados unidos"},
+            {q: "¿En qué continente se encuentra la cordillera del Himalaya?", a: "asia"},
+            {q: "¿Qué país es conocido como la 'Tierra del Sol Naciente'?", a: "japón"},
+            {q: "¿Cuál es el océano más grande del planeta?", a: "pacífico"},
+            {q: "¿En qué ciudad se encuentra la Torre Eiffel?", a: "parís"},
+            {q: "¿Qué desierto es el mayor del mundo?", a: "antártico"},
+            {q: "¿Cuál es la montaña más alta del mundo, si medimos desde su base en el fondo del océano hasta su cima?", a: "mauna kea"},
+            {q: "¿Cuántas estrellas tiene la bandera de Estados Unidos?", a: "50"},
+            {q: "¿Qué estrecho separa Europa de África?", a: "estrecho de gibraltar"}
+        ];
         let currentQuestion = null;
         let usedQuestions = [];
+        let currentGeographyQuestion = null;
+        let usedGeographyQuestions = [];
 
         // Ahorcado
         let secretWord = '';
@@ -433,6 +467,7 @@
             document.getElementById(game + '-game').classList.add('active');
             
             if (game === 'trivia') nextQuestion();
+            if (game === 'geography') nextGeographyQuestion();
             if (game === 'tictactoe') initTicTacToe();
         }
 
@@ -447,7 +482,9 @@
         function resetGames() {
             pptScore = {player: 0, computer: 0};
             triviaScore = {aciertos: 0, fallos: 0};
+            geographyScore = {aciertos: 0, fallos: 0};
             usedQuestions = [];
+            usedGeographyQuestions = [];
             document.getElementById('ahorcado-setup').style.display = 'block';
             document.getElementById('ahorcado-play').style.display = 'none';
         }
@@ -577,6 +614,45 @@
                 document.getElementById('trivia-result').innerHTML += '<div class="result lose">🧼 ¡A fregar ollas! Perdiste</div>';
             } else {
                 setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        // QUIZ GEOGRAFÍA
+        function nextGeographyQuestion() {
+            if (usedGeographyQuestions.length === geographyQuestions.length) {
+                usedGeographyQuestions = [];
+            }
+            
+            let availableQuestions = geographyQuestions.filter((_, i) => !usedGeographyQuestions.includes(i));
+            let randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            currentGeographyQuestion = availableQuestions[randomIndex];
+            
+            usedGeographyQuestions.push(geographyQuestions.indexOf(currentGeographyQuestion));
+            
+            document.getElementById('geography-question').textContent = currentGeographyQuestion.q;
+            document.getElementById('geography-answer').value = '';
+            document.getElementById('geography-result').innerHTML = '';
+        }
+
+        function checkGeographyAnswer() {
+            const userAnswer = document.getElementById('geography-answer').value.toLowerCase().trim();
+            
+            if (userAnswer === currentGeographyQuestion.a) {
+                geographyScore.aciertos++;
+                document.getElementById('geography-result').innerHTML = '<div class="result win">✅ ¡CORRECTO!</div>';
+            } else {
+                geographyScore.fallos++;
+                document.getElementById('geography-result').innerHTML = `<div class="result lose">❌ Incorrecto. La respuesta correcta es: ${currentGeographyQuestion.a}</div>`;
+            }
+            
+            document.getElementById('geography-score').textContent = `Aciertos: ${geographyScore.aciertos} | Fallos: ${geographyScore.fallos}`;
+            
+            if (geographyScore.aciertos === 5) {
+                document.getElementById('geography-result').innerHTML += '<div class="result win">🎉 ¡VICTORIA! ¡Has ganado!</div>';
+            } else if (geographyScore.fallos === 3) {
+                document.getElementById('geography-result').innerHTML += '<div class="result lose">💀 ¡DERROTA! Demasiados errores</div>';
+            } else {
+                setTimeout(nextGeographyQuestion, 2000);
             }
         }
 
