@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Arcade Juegos Clásicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .game-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-description {
+            opacity: 0.9;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .game-area {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            color: #333;
+            animation: fadeIn 0.5s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        input, button {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+            font-size: 1em;
+            margin: 10px 5px;
+        }
+
+        button:not(.back-button) {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:not(.back-button):hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            font-size: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .cell:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .hangman-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            white-space: pre;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .word-display {
+            font-size: 2.5em;
+            letter-spacing: 10px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .letters-used {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            font-size: 3em;
+            background: white;
+            border: 3px solid #667eea;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .choice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.8em;
+            margin: 20px 0;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px;
+            animation: pulse 0.5s;
+        }
+
+        .result.win {
+            background: #4caf50;
+            color: white;
+        }
+
+        .result.lose {
+            background: #f44336;
+            color: white;
+        }
+
+        .result.tie {
+            background: #ff9800;
+            color: white;
+        }
+
+        .bonus-badge {
+            display: inline-block;
+            background: gold;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .question-card {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Arcade de Juegos Clásicos</h1>
+            <p class="subtitle">Proyecto Módulo 1 - ADALAB Promoción 59 | Grupo 4</p>
+        </header>
+
+        <div id="menu" class="games-grid">
+            <div class="game-card" onclick="showGame('ppt')">
+                <div class="game-icon">🪨📄✂️</div>
+                <div class="game-title">Piedra, Papel o Tijera</div>
+                <div class="game-description">Compite contra la computadora. ¡El primero en 5 puntos gana!</div>
+            </div>
+
+            <div class="game-card" onclick="showGame('ahorcado')">
+                <div class="game-icon">🎪</div>
+                <div class="game-title">El Ahorcado</div>
+                <div class="game-description">Adivina la palabra secreta antes de que se complete el dibujo.</div>
+            </div>
+
+            <div class="game-card" onclick="showGame('trivia')">
+                <div class="game-icon">🍽️</div>
+                <div class="game-title">Trivia Gastronómica</div>
+                <div class="game-description">¿Reconoces las ciudades españolas por sus platos típicos?</div>
+            </div>
+
+            <div class="game-card" onclick="showGame('geography')">
+                <div class="game-icon">🌍</div>
+                <div class="game-title">Quiz de Geografía</div>
+                <div class="game-description">Pon a prueba tus conocimientos geográficos del mundo.</div>
+            </div>
+
+            <div class="game-card" onclick="showGame('tictactoe')">
+                <div class="game-icon">⭕❌</div>
+                <div class="game-title">Tic Tac Toe <span class="bonus-badge">BONUS</span></div>
+                <div class="game-description">Tres en raya clásico para dos jugadores.</div>
+            </div>
+        </div>
+
+        <!-- Piedra Papel Tijera -->
+        <div id="ppt-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>🪨📄✂️ Piedra, Papel o Tijera</h2>
+            <div class="score" id="ppt-score">Tú: 0 | Computadora: 0</div>
+            <div class="choices">
+                <button class="choice-btn" onclick="playPPT('piedra')">🪨</button>
+                <button class="choice-btn" onclick="playPPT('papel')">📄</button>
+                <button class="choice-btn" onclick="playPPT('tijera')">✂️</button>
+            </div>
+            <div id="ppt-result"></div>
+        </div>
+
+        <!-- Ahorcado -->
+        <div id="ahorcado-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>🎪 El Ahorcado</h2>
+            <div id="ahorcado-setup">
+                <h3>Jugador 1: Ingresa la palabra secreta</h3>
+                <input type="password" id="secret-word" placeholder="Palabra secreta">
+                <button onclick="startAhorcado()">Comenzar Juego</button>
+            </div>
+            <div id="ahorcado-play" style="display:none;">
+                <div class="hangman-display" id="hangman-drawing"></div>
+                <div class="word-display" id="word-progress"></div>
+                <div class="score">Intentos restantes: <span id="attempts">6</span></div>
+                <div class="letters-used">Letras usadas: <span id="used-letters"></span></div>
+                <input type="text" id="letter-input" maxlength="1" placeholder="Letra">
+                <button onclick="guessLetter()">Adivinar</button>
+                <div id="ahorcado-result"></div>
+            </div>
+        </div>
+
+        <!-- Trivia -->
+        <div id="trivia-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>🍽️ Trivia Gastronómica Española</h2>
+            <div class="score" id="trivia-score">Aciertos: 0 | Fallos: 0</div>
+            <div class="question-card" id="question-card">
+                <div class="question-text" id="question-text"></div>
+                <input type="text" id="answer-input" placeholder="Escribe la ciudad (sin tildes)">
+                <button onclick="checkAnswer()">Responder</button>
+            </div>
+            <div id="trivia-result"></div>
+        </div>
+
+        <!-- Quiz Geografía -->
+        <div id="geography-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>🌍 Quiz de Geografía</h2>
+            <div class="score" id="geography-score">Aciertos: 0 | Fallos: 0</div>
+            <div class="question-card">
+                <div class="question-text" id="geography-question"></div>
+                <input type="text" id="geography-answer" placeholder="Escribe tu respuesta">
+                <button onclick="checkGeographyAnswer()">Responder</button>
+            </div>
+            <div id="geography-result"></div>
+        </div>
+
+        <!-- Tic Tac Toe -->
+        <div id="tictactoe-game" class="game-area">
+            <button class="back-button" onclick="backToMenu()">← Volver al Menú</button>
+            <h2>⭕❌ Tic Tac Toe <span class="bonus-badge">BONUS</span></h2>
+            <div class="score" id="ttt-turn">Turno: X</div>
+            <div class="board" id="ttt-board"></div>
+            <button onclick="resetTicTacToe()">Nueva Partida</button>
+            <div id="ttt-result"></div>
+        </div>
+
+        <div class="footer">
+            <p><strong>💻 Desarrollado por el Grupo 4 - Promoción 59 de ADALAB</strong></p>
+            <p>Bet Aguiló Thió | Marina Martin Díaz | Alba Jalencas Perera | Ruth Anyele Cuevas | Leire Marinas López</p>
+            <p>Proyecto Módulo 1 - Python</p>
+        </div>
+    </div>
+
+    <script>
+        // Estado global
+        let pptScore = {player: 0, computer: 0};
+        let triviaScore = {aciertos: 0, fallos: 0};
+        let geographyScore = {aciertos: 0, fallos: 0};
+        let triviaQuestions = [
+            {q: "Si alguien te ofrece tapas gratis con cada bebida y piensas esto es demasiado bueno para ser verdad, ¿en qué ciudad estás?", a: "granada"},
+            {q: "¿En qué ciudad comer un rabo de toro es tan normal que nadie se sorprende?", a: "cordoba"},
+            {q: "¿Dónde comer bocadillos de calamares es casi obligatorio?", a: "madrid"},
+            {q: "Si pedir pan con tomate no levanta sospechas de extrañeza, ¿en qué ciudad estás?", a: "barcelona"},
+            {q: "Si un plato de marmitako de bonito se sirve casi en cada restaurante de pescado, ¿dónde estás?", a: "bilbao"},
+            {q: "¿En qué ciudad pedir una paella es casi un arte?", a: "valencia"},
+            {q: "¿En qué ciudad el ternasco asado es el rey indiscutible de los menús?", a: "zaragoza"},
+            {q: "Si la morcilla es tan famosa que tiene hasta su propia denominación de origen, ¿en qué ciudad estás?", a: "burgos"},
+            {q: "¿Dónde pedir un cachopo del tamaño de tu cabeza es completamente normal?", a: "asturias"},
+            {q: "Si te invitan a comer Rabas (calamares fritos), un aperitivo que sabe a mar y que se come principalmente los domingos, ¿en qué ciudad estás?", a: "santander"}
+        ];
+        let geographyQuestions = [
+            {q: "¿Cuál es la capital de Australia?", a: "canberra"},
+            {q: "¿Cuál es la frontera terrestre más larga del mundo?", a: "canadá y estados unidos"},
+            {q: "¿En qué continente se encuentra la cordillera del Himalaya?", a: "asia"},
+            {q: "¿Qué país es conocido como la 'Tierra del Sol Naciente'?", a: "japón"},
+            {q: "¿Cuál es el océano más grande del planeta?", a: "pacífico"},
+            {q: "¿En qué ciudad se encuentra la Torre Eiffel?", a: "parís"},
+            {q: "¿Qué desierto es el mayor del mundo?", a: "antártico"},
+            {q: "¿Cuál es la montaña más alta del mundo, si medimos desde su base en el fondo del océano hasta su cima?", a: "mauna kea"},
+            {q: "¿Cuántas estrellas tiene la bandera de Estados Unidos?", a: "50"},
+            {q: "¿Qué estrecho separa Europa de África?", a: "estrecho de gibraltar"}
+        ];
+        let currentQuestion = null;
+        let usedQuestions = [];
+        let currentGeographyQuestion = null;
+        let usedGeographyQuestions = [];
+
+        // Ahorcado
+        let secretWord = '';
+        let wordProgress = [];
+        let usedLetters = [];
+        let attempts = 6;
+        const hangmanStages = [
+            "   +---+\n       |\n       |\n       |\n     =====",
+            "   +---+\n   😢  |\n       |\n       |\n     =====",
+            "   +---+\n   😢  |\n    |  |\n       |\n     =====",
+            "   +---+\n   😢  |\n   /|  |\n       |\n     =====",
+            "   +---+\n   😢  |\n   /|\\ |\n       |\n     =====",
+            "   +---+\n   😢  |\n   /|\\ |\n   /   |\n     =====",
+            "   +---+\n   😢  |\n   /|\\ |\n   / \\ |\n     ====="
+        ];
+
+        // Tic Tac Toe
+        let tttBoard = ['','','','','','','','',''];
+        let tttCurrentPlayer = 'X';
+        let tttGameActive = true;
+
+        function showGame(game) {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById(game + '-game').classList.add('active');
+            
+            if (game === 'trivia') nextQuestion();
+            if (game === 'geography') nextGeographyQuestion();
+            if (game === 'tictactoe') initTicTacToe();
+        }
+
+        function backToMenu() {
+            document.querySelectorAll('.game-area').forEach(area => {
+                area.classList.remove('active');
+            });
+            document.getElementById('menu').style.display = 'grid';
+            resetGames();
+        }
+
+        function resetGames() {
+            pptScore = {player: 0, computer: 0};
+            triviaScore = {aciertos: 0, fallos: 0};
+            geographyScore = {aciertos: 0, fallos: 0};
+            usedQuestions = [];
+            usedGeographyQuestions = [];
+            document.getElementById('ahorcado-setup').style.display = 'block';
+            document.getElementById('ahorcado-play').style.display = 'none';
+        }
+
+        // PIEDRA PAPEL TIJERA
+        function playPPT(playerChoice) {
+            const choices = ['piedra', 'papel', 'tijera'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            const icons = {piedra: '🪨', papel: '📄', tijera: '✂️'};
+            
+            let result = '';
+            
+            if (playerChoice === computerChoice) {
+                result = `<div class="result tie">🤝 ¡EMPATE!<br>Ambos eligieron ${icons[playerChoice]}</div>`;
+            } else if (
+                (playerChoice === 'piedra' && computerChoice === 'tijera') ||
+                (playerChoice === 'papel' && computerChoice === 'piedra') ||
+                (playerChoice === 'tijera' && computerChoice === 'papel')
+            ) {
+                pptScore.player++;
+                result = `<div class="result win">🎉 ¡GANASTE!<br>Tú: ${icons[playerChoice]} vs PC: ${icons[computerChoice]}</div>`;
+            } else {
+                pptScore.computer++;
+                result = `<div class="result lose">😢 ¡PERDISTE!<br>Tú: ${icons[playerChoice]} vs PC: ${icons[computerChoice]}</div>`;
+            }
+            
+            document.getElementById('ppt-score').textContent = `Tú: ${pptScore.player} | Computadora: ${pptScore.computer}`;
+            document.getElementById('ppt-result').innerHTML = result;
+            
+            if (pptScore.player === 5) {
+                document.getElementById('ppt-result').innerHTML += '<div class="result win">🏆 ¡ERES EL CAMPEÓN!</div>';
+            } else if (pptScore.computer === 5) {
+                document.getElementById('ppt-result').innerHTML += '<div class="result lose">🤖 ¡LA COMPUTADORA GANÓ!</div>';
+            }
+        }
+
+        // AHORCADO
+        function startAhorcado() {
+            secretWord = document.getElementById('secret-word').value.toLowerCase();
+            if (!secretWord) {
+                alert('Por favor ingresa una palabra');
+                return;
+            }
+            wordProgress = Array(secretWord.length).fill('_');
+            usedLetters = [];
+            attempts = 6;
+            
+            document.getElementById('ahorcado-setup').style.display = 'none';
+            document.getElementById('ahorcado-play').style.display = 'block';
+            updateAhorcado();
+        }
+
+        function guessLetter() {
+            const letter = document.getElementById('letter-input').value.toLowerCase();
+            if (!letter || usedLetters.includes(letter)) {
+                alert('Letra inválida o ya usada');
+                return;
+            }
+            
+            usedLetters.push(letter);
+            
+            if (secretWord.includes(letter)) {
+                for (let i = 0; i < secretWord.length; i++) {
+                    if (secretWord[i] === letter) {
+                        wordProgress[i] = letter;
+                    }
+                }
+            } else {
+                attempts--;
+            }
+            
+            document.getElementById('letter-input').value = '';
+            updateAhorcado();
+            checkAhorcadoEnd();
+        }
+
+        function updateAhorcado() {
+            document.getElementById('hangman-drawing').textContent = hangmanStages[6 - attempts];
+            document.getElementById('word-progress').textContent = wordProgress.join(' ');
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('used-letters').textContent = usedLetters.join(', ');
+        }
+
+        function checkAhorcadoEnd() {
+            if (!wordProgress.includes('_')) {
+                document.getElementById('ahorcado-result').innerHTML = '<div class="result win">🎉 ¡GANASTE! Adivinaste la palabra</div>';
+                document.getElementById('letter-input').disabled = true;
+            } else if (attempts === 0) {
+                document.getElementById('ahorcado-result').innerHTML = `<div class="result lose">💀 ¡PERDISTE! La palabra era: ${secretWord}</div>`;
+                document.getElementById('letter-input').disabled = true;
+            }
+        }
+
+        // TRIVIA
+        function nextQuestion() {
+            if (usedQuestions.length === triviaQuestions.length) {
+                usedQuestions = [];
+            }
+            
+            let availableQuestions = triviaQuestions.filter((_, i) => !usedQuestions.includes(i));
+            let randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            currentQuestion = availableQuestions[randomIndex];
+            
+            usedQuestions.push(triviaQuestions.indexOf(currentQuestion));
+            
+            document.getElementById('question-text').textContent = currentQuestion.q;
+            document.getElementById('answer-input').value = '';
+            document.getElementById('trivia-result').innerHTML = '';
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer-input').value.toLowerCase().trim();
+            
+            if (userAnswer === currentQuestion.a) {
+                triviaScore.aciertos++;
+                document.getElementById('trivia-result').innerHTML = '<div class="result win">✅ ¡CORRECTO!</div>';
+            } else {
+                triviaScore.fallos++;
+                document.getElementById('trivia-result').innerHTML = `<div class="result lose">❌ Incorrecto. Era: ${currentQuestion.a}</div>`;
+            }
+            
+            document.getElementById('trivia-score').textContent = `Aciertos: ${triviaScore.aciertos} | Fallos: ${triviaScore.fallos}`;
+            
+            if (triviaScore.aciertos === 5) {
+                document.getElementById('trivia-result').innerHTML += '<div class="result win">🏆 ¡MAESTRO COCINERO! ¡Ganaste!</div>';
+            } else if (triviaScore.fallos === 3) {
+                document.getElementById('trivia-result').innerHTML += '<div class="result lose">🧼 ¡A fregar ollas! Perdiste</div>';
+            } else {
+                setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        // QUIZ GEOGRAFÍA
+        function nextGeographyQuestion() {
+            if (usedGeographyQuestions.length === geographyQuestions.length) {
+                usedGeographyQuestions = [];
+            }
+            
+            let availableQuestions = geographyQuestions.filter((_, i) => !usedGeographyQuestions.includes(i));
+            let randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            currentGeographyQuestion = availableQuestions[randomIndex];
+            
+            usedGeographyQuestions.push(geographyQuestions.indexOf(currentGeographyQuestion));
+            
+            document.getElementById('geography-question').textContent = currentGeographyQuestion.q;
+            document.getElementById('geography-answer').value = '';
+            document.getElementById('geography-result').innerHTML = '';
+        }
+
+        function checkGeographyAnswer() {
+            const userAnswer = document.getElementById('geography-answer').value.toLowerCase().trim();
+            
+            if (userAnswer === currentGeographyQuestion.a) {
+                geographyScore.aciertos++;
+                document.getElementById('geography-result').innerHTML = '<div class="result win">✅ ¡CORRECTO!</div>';
+            } else {
+                geographyScore.fallos++;
+                document.getElementById('geography-result').innerHTML = `<div class="result lose">❌ Incorrecto. La respuesta correcta es: ${currentGeographyQuestion.a}</div>`;
+            }
+            
+            document.getElementById('geography-score').textContent = `Aciertos: ${geographyScore.aciertos} | Fallos: ${geographyScore.fallos}`;
+            
+            if (geographyScore.aciertos === 5) {
+                document.getElementById('geography-result').innerHTML += '<div class="result win">🎉 ¡VICTORIA! ¡Has ganado!</div>';
+            } else if (geographyScore.fallos === 3) {
+                document.getElementById('geography-result').innerHTML += '<div class="result lose">💀 ¡DERROTA! Demasiados errores</div>';
+            } else {
+                setTimeout(nextGeographyQuestion, 2000);
+            }
+        }
+
+        // TIC TAC TOE
+        function initTicTacToe() {
+            const board = document.getElementById('ttt-board');
+            board.innerHTML = '';
+            tttBoard = ['','','','','','','','',''];
+            tttCurrentPlayer = 'X';
+            tttGameActive = true;
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => makeMove(i);
+                board.appendChild(cell);
+            }
+            
+            document.getElementById('ttt-turn').textContent = 'Turno: X';
+            document.getElementById('ttt-result').innerHTML = '';
+        }
+
+        function makeMove(index) {
+            if (tttBoard[index] !== '' || !tttGameActive) return;
+            
+            tttBoard[index] = tttCurrentPlayer;
+            updateTicTacToeDisplay();
+            
+            if (checkWinner()) {
+                document.getElementById('ttt-result').innerHTML = `<div class="result win">🎉 ¡Jugador ${tttCurrentPlayer} GANA!</div>`;
+                tttGameActive = false;
+            } else if (!tttBoard.includes('')) {
+                document.getElementById('ttt-result').innerHTML = '<div class="result tie">🤝 ¡EMPATE!</div>';
+                tttGameActive = false;
+            } else {
+                tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
+                document.getElementById('ttt-turn').textContent = `Turno: ${tttCurrentPlayer}`;
+            }
+        }
+
+        function updateTicTacToeDisplay() {
+            const cells = document.querySelectorAll('#ttt-board .cell');
+            tttBoard.forEach((val, i) => {
+                cells[i].textContent = val;
+                cells[i].style.color = val === 'X' ? '#667eea' : '#764ba2';
+            });
+        }
+
+        function checkWinner() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            
+            return lines.some(([a,b,c]) => 
+                tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]
+            );
+        }
+
+        function resetTicTacToe() {
+            initTicTacToe();
+        }
+    </script>
+</body>
+</html>
