@@ -316,13 +316,13 @@
             <div class="game-card" onclick="showGame('trivia')">
                 <div class="game-icon">🍽️</div>
                 <div class="game-title">Trivia Gastronómica</div>
-                <div class="game-description">¿Reconoces las ciudades españolas por sus platos típicos?</div>
+                <div class="game-description">¿Reconoces las ciudades españolas por sus platos típicos? ¡Consigue 5 aciertos para ganar!</div>
             </div>
 
             <div class="game-card" onclick="showGame('geography')">
                 <div class="game-icon">🌍</div>
                 <div class="game-title">Quiz de Geografía</div>
-                <div class="game-description">Pon a prueba tus conocimientos geográficos del mundo.</div>
+                <div class="game-description">Pon a prueba tus conocimientos geográficos del mundo. ¡Consigue 5 aciertos para ganar!</div>
             </div>
 
             <div class="game-card" onclick="showGame('tictactoe')">
@@ -683,39 +683,3 @@
             
             if (checkWinner()) {
                 document.getElementById('ttt-result').innerHTML = `<div class="result win">🎉 ¡Jugador ${tttCurrentPlayer} GANA!</div>`;
-                tttGameActive = false;
-            } else if (!tttBoard.includes('')) {
-                document.getElementById('ttt-result').innerHTML = '<div class="result tie">🤝 ¡EMPATE!</div>';
-                tttGameActive = false;
-            } else {
-                tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
-                document.getElementById('ttt-turn').textContent = `Turno: ${tttCurrentPlayer}`;
-            }
-        }
-
-        function updateTicTacToeDisplay() {
-            const cells = document.querySelectorAll('#ttt-board .cell');
-            tttBoard.forEach((val, i) => {
-                cells[i].textContent = val;
-                cells[i].style.color = val === 'X' ? '#667eea' : '#764ba2';
-            });
-        }
-
-        function checkWinner() {
-            const lines = [
-                [0,1,2], [3,4,5], [6,7,8],
-                [0,3,6], [1,4,7], [2,5,8],
-                [0,4,8], [2,4,6]
-            ];
-            
-            return lines.some(([a,b,c]) => 
-                tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]
-            );
-        }
-
-        function resetTicTacToe() {
-            initTicTacToe();
-        }
-    </script>
-</body>
-</html>
