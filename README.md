@@ -51,7 +51,22 @@ Adivina ciudades españolas basándote en pistas sobre sus platos típicos.
 python trivia_gastronomica.py
 ```
 
-### 4. ⭕❌ Tic Tac Toe (Tres en Raya) - BONUS GAME 🎁
+### 4. 🍽️ Quiz de Geografía: Pon a prueba tus conocimientos
+Preguntas diversas sobre geografía a nivel mundial.
+
+**Características:**
+- 10 preguntas sobre geografía genérica
+- Sistema de aciertos y fallos
+- Proporciona la respuesta correcta
+- Necesitas 5 aciertos para ganar
+- Máximo 3 fallos permitidos
+
+**Cómo jugar:**
+```bash
+python quiz_geografia.py
+```
+
+### 5. ⭕❌ Tic Tac Toe (Tres en Raya) - BONUS GAME 🎁
 Juego clásico de tres en raya para dos jugadores.
 
 **Características:**
